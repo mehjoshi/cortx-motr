@@ -48,15 +48,15 @@ file=(
 )
 
 file_size=(
-	50
-	70
-	30
+	503
+	263
+	251
 )
 
 unit_size=(
-	$stride
-	$stride
-	$stride
+	4
+	8
+	16
 )
 
 sns_repair_mount()
