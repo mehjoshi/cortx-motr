@@ -32,15 +32,16 @@ prepare_datafiles_and_objects()
 			      -H ${lnet_nid}:$HA_EP -p $PROF_OPT \
 			      -P $M0T1FS_PROC_ID -L ${lid} -s ${us} "
 
-		echo "creating object ${file[$i]} bs=${us} * c=${file_size[$i]}"
-		dd bs=${us} count=${file_size[$i]}            \
-		   if="$MOTR_M0T1FS_TEST_DIR/srcfile"         \
+		echo "creating object src${file[$i]} bs=${us} * count=${file_size[$i]}"
+		dd ibs=${us} count=${file_size[$i]}            \
+                   obs=$((${us} * 100)) \
+		   if=/dev/urandom         \
 		   of="$MOTR_M0T1FS_TEST_DIR/src${file[$i]}"
 
 		$M0_SRC_DIR/motr/st/utils/m0cp ${MOTR_PARAM}     \
 						 -c ${file_size[$i]} \
 						 -o ${file[$i]}      \
-					 "$MOTR_M0T1FS_TEST_DIR/srcfile" || {
+					 "$MOTR_M0T1FS_TEST_DIR/src${file[$i]}" || {
 			rc=$?
 			echo "Writing object ${file[$i]} failed"
 		}
