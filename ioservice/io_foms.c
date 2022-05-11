@@ -1673,7 +1673,8 @@ M0_INTERNAL uint64_t m0_io_size(struct m0_stob_io *sio, uint32_t bshift)
 	uint64_t off;
 
 	last_io_off = sio->si_stob.iv_vec.v_nr - 1;
-	off = (sio->si_stob.iv_index[last_io_off] + 1) << bshift;
+	off = (sio->si_stob.iv_index[last_io_off] +
+               sio->si_stob.iv_vec.v_count[last_io_off]) << bshift;
 	return off;
 }
 
@@ -2544,7 +2545,7 @@ static int cob_bytecount_increment(struct m0_cob *cob, struct m0_cob_bckey *key,
 	} else
 		M0_ERR(rc);
 
-	return M0_RC(rc);		
+	return M0_RC(rc);
 }
 
 #undef M0_TRACE_SUBSYSTEM
