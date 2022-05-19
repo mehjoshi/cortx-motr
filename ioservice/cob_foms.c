@@ -394,6 +394,8 @@ static int cob_getattr_fom_tick(struct m0_fom *fom)
 		M0_LOG(M0_DEBUG, "Cob %s operation started for "FID_F,
 		       ops, FID_P(&cob_op->fco_gfid));
 		rc = cob_getattr(fom, cob_op, &attr);
+		M0_LOG(M0_DEBUG, "mehul ");
+		m0_dump_cob_attr(&attr);
 		m0_md_cob_mem2wire(&reply->cgr_body, &attr);
 		m0_fom_phase_moveif(fom, rc, M0_FOPH_SUCCESS, M0_FOPH_FAILURE);
 	        M0_LOG(M0_DEBUG, "Cob %s operation for "FID_F" finished with "

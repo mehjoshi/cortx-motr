@@ -1079,6 +1079,7 @@ M0_INTERNAL int m0_indexvec_wire2mem(struct m0_io_indexvec *wire_ivec,
 	for (i = 0; i < wire_ivec->ci_nr; ++i) {
 		*(offs++) = wire_ivec->ci_iosegs[i].ci_index >> bshift;
 		*(cnts++) = wire_ivec->ci_iosegs[i].ci_count >> bshift;
+		M0_LOG(M0_DEBUG, "mehul: off = %" PRIu64 " count = %" PRIu64 "", wire_ivec->ci_iosegs[i].ci_index >> bshift, wire_ivec->ci_iosegs[i].ci_count >> bshift);
 	}
 
 	return 0;

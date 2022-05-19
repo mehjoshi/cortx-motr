@@ -29,6 +29,7 @@
 #include "sns/cm/file.h"
 #include "sns/cm/ag.h"
 #include "cm/proxy.h"
+#include "pool/pool.h"
 #include "pool/pool_machine.h"
 
 M0_INTERNAL int m0_sns_cm_repair_ag_setup(struct m0_sns_cm_ag *sag,
@@ -192,6 +193,7 @@ static bool repair_ag_is_relevant(struct m0_sns_cm *scm,
 			if (rc != 0)
 				break;
 			spare = data_unit;
+			M0_LOG(M0_DEBUG, "mehul: spare = %d", spare);
 		} while (m0_sns_cm_unit_is_spare(fctx, group, data_unit));
 
 		if (rc != 0)
@@ -231,6 +233,7 @@ static bool repair_is_cob_failed(struct m0_poolmach *pm,
  	   repaired device fails during rebalance, and a new repair is
 	   triggered. The cob is not marked as failed, since it was already
 	   repaired */
+	M0_LOG(M0_DEBUG, "mehul: device state %d (%s)", state_out, m0_pool_dev_state_to_str(state_out));
 	return !M0_IN(state_out, (M0_PNDS_ONLINE, M0_PNDS_OFFLINE,
 		      M0_PNDS_SNS_REBALANCING));
 }

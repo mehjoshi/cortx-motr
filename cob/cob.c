@@ -1205,6 +1205,7 @@ static int cob_ns_lookup(struct m0_cob *cob)
 		cob->co_flags |= M0_CA_NSREC;
 		M0_ASSERT(cob->co_nsrec.cnr_linkno > 0 ||
 			  cob->co_nsrec.cnr_nlink > 0);
+		M0_LOG(M0_DEBUG, "mehul cob size = %" PRIu64, cob->co_nsrec.cnr_size);
 		M0_POST(m0_fid_is_set(m0_cob_fid(cob)));
 	}
 	return rc;
@@ -2147,6 +2148,8 @@ M0_INTERNAL int m0_cob_size_update(struct m0_cob *cob, uint64_t size,
 	int rc;
 
 	cob->co_nsrec.cnr_size = size;
+	M0_LOG(M0_DEBUG, "mehul cob_fid="FID_F" cnr_size=%"PRIu64"",
+               FID_P(&cob->co_nsrec.cnr_fid), cob->co_nsrec.cnr_size);
 	rc = m0_cob_update(cob, &cob->co_nsrec, NULL, NULL, tx);
 
 	return rc != 0 ? M0_ERR(rc) : M0_RC(rc);

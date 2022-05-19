@@ -312,7 +312,7 @@ _dd()
 	local BS=$2
 	local COUNT=$3
 
-	dd if=$MOTR_M0T1FS_TEST_DIR/srcfile bs=$BS count=$COUNT \
+	yes DEADBEEF | tr -d \\n | dd bs=$BS count=$COUNT \
 	   of=$MOTR_M0T1FS_MOUNT_DIR/$FILE &>> $MOTR_TEST_LOGFILE || {
 		echo "Failed: dd failed.."
 		unmount_and_clean &>> $MOTR_TEST_LOGFILE
@@ -337,7 +337,7 @@ local_write()
 	local BS=$1
 	local COUNT=$2
 
-	dd if=/dev/urandom bs=$BS count=$COUNT \
+	yes DEADBEEF | tr -d \\n | dd bs=$BS count=$COUNT \
 		of=$MOTR_M0T1FS_TEST_DIR/srcfile &>> $MOTR_TEST_LOGFILE || {
 			echo "local write failed"
 			unmount_and_clean &>> $MOTR_TEST_LOGFILE

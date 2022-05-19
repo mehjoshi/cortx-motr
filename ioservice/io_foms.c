@@ -1673,7 +1673,9 @@ M0_INTERNAL uint64_t m0_io_size(struct m0_stob_io *sio, uint32_t bshift)
 	uint64_t off;
 
 	last_io_off = sio->si_stob.iv_vec.v_nr - 1;
-	off = (sio->si_stob.iv_index[last_io_off] + 1) << bshift;
+	/* off = (sio->si_stob.iv_index[last_io_off] + 1) << bshift; */
+	off = (sio->si_stob.iv_index[last_io_off] + sio->si_stob.iv_vec.v_count[last_io_off]) << bshift;
+
 	return off;
 }
 
@@ -1702,6 +1704,15 @@ static int io_launch(struct m0_fom *fom)
 	struct m0_fop_cob_rw    *rwfop;
 	struct m0_file          *file = NULL;
 	uint32_t                 index;
+
+/* mehul: debug --> */
+/*
+        m0_bcount_t *cnts;
+        m0_bindex_t *offs;
+*/
+	int i;
+	struct m0_indexvec *mem_ivec;
+/*<-- debug */
 
 	M0_PRE(fom != NULL);
 	M0_PRE(m0_is_io_fop(fom->fo_fop));
@@ -1733,7 +1744,19 @@ static int io_launch(struct m0_fom *fom)
 					   &fom_obj->fcrw_netbuf_list));
 	M0_INVARIANT_EX(m0_tlist_invariant(&stobio_tl,
 					   &fom_obj->fcrw_stio_list));
+/* mehul: debug --> */
+ 	mem_ivec = &fom_obj->fcrw_io.si_stob;
+        /* offs = mem_ivec->iv_index;
+        cnts = mem_ivec->iv_vec.v_count; */
 
+        for (i = 0; i < mem_ivec->iv_vec.v_nr; ++i) {
+                // *(offs++) = wire_ivec->ci_iosegs[i].ci_index >> bshift;
+                // *(cnts++) = wire_ivec->ci_iosegs[i].ci_count >> bshift;
+                /* M0_LOG(M0_DEBUG, "mehul2: off = %" PRIu64 " count = %" PRIu64 "", *(offs++), *(cnts)); */
+                M0_LOG(M0_DEBUG, "mehul2: off = %" PRIu64 " count = %" PRIu64 "", mem_ivec->iv_index[i], mem_ivec->iv_vec.v_count[i]);
+
+        }
+/* <-- debug */
 	index = fom_obj->fcrw_curr_desc_index;
 	/*
 	 * During write, zero copy is performed before stob I/O is launched.
@@ -1936,6 +1959,7 @@ static int io_finish(struct m0_fom *fom)
 					max64u(fom_obj->fcrw_cob_size,
 					       m0_io_size(stio,
 							  fom_obj->fcrw_bshift));
+				M0_LOG(M0_DEBUG, "mehul fom_obj_fcrw_cob_size = %" PRIu64 "", fom_obj->fcrw_cob_size);
 			}
 			nob += stio->si_count;
 			M0_LOG(M0_DEBUG, "rw_count %" PRIi64 ", si_count %"PRIi64,
@@ -1957,6 +1981,7 @@ static int io_finish(struct m0_fom *fom)
 		}
 	}
 
+	M0_LOG(M0_DEBUG, "mehul fcrw_cob_size = %"PRIu64"",fom_obj->fcrw_cob_size);
 	M0_LOG(M0_DEBUG, "got    fom: %"PRIi64", req_count: %"PRIi64", "
 	       "count: %"PRIx64", nob: %"PRIx64"", fom_obj->fcrw_fom_start_time,
 	       fom_obj->fcrw_req_count, fom_obj->fcrw_count, nob);

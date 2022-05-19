@@ -39,7 +39,7 @@ sns_repair_motr_test()
 	echo "Starting SNS repair MOTR 1f testing ..."
 
 	prepare_datafiles_and_objects || return $?
-	motr_read_verify 0          || return $?
+	# motr_read_verify 0          || return $?
 
 	for ((i=0; i < ${#IOSEP[*]}; i++)) ; do
 		ios_eps="$ios_eps -S ${lnet_nid}:${IOSEP[$i]}"
@@ -48,93 +48,95 @@ sns_repair_motr_test()
 ####### Set Failure device
 	disk_state_set "failed" $fail_device || return $?
 
-	disk_state_get $fail_device || return $?
+	# disk_state_get $fail_device || return $?
 
 	echo "Device $fail_device failed. Do dgmode read"
 	motr_read_verify 0 || return $?
 
 	disk_state_set "repair" $fail_device || return $?
 	sns_repair || return $?
-
-	echo "**** Test spurious rebalance request during repair, this should fail *****"
-	disk_state_set "rebalance" $fail_device || return $?
-	disk_state_get $fail_device || return $?
-
-	sns_rebalance
-
-	# Wait for rebalance request to complete.
-	wait_for_sns_repair_or_rebalance "rebalance"
-	disk_state_set "online" $fail_device
-
-	disk_state_get $fail_device
-	echo "**** Spurious rebalance event test completed *****"
-
-	# Make sure that repair is complete.
 	wait_for_sns_repair_or_rebalance "repair"
-
-	disk_state_set "failed" $fail_device
-
-	disk_state_get $fail_device
-
-	echo "Device $fail_device failed. Do dgmode read"
 	motr_read_verify 0 || return $?
 
-	disk_state_set "repair" $fail_device || return $?
-	sns_repair || return $?
-
-	echo "wait for sns repair"
-	wait_for_sns_repair_or_rebalance "repair" || return $?
-
-	disk_state_set "repaired" $fail_device || return $?
-
-	echo "query sns repair status"
-	sns_repair_or_rebalance_status "repair" || return $?
-
-	echo "SNS Repair done."
-	motr_read_verify 0 || return $?
-
-	echo "Query device state"
-	disk_state_get $fail_device || return $?
-
-	disk_state_set "rebalance" $fail_device || return $?
-	echo "Starting SNS Re-balance.."
-	sns_rebalance || return $?
-
-	echo "**** Test spurious repair event during rebalance, this should fail  *****"
-	disk_state_set "failed" $fail_device || return $?
-	disk_state_get $fail_device || return $?
-
-	disk_state_set "repair" $fail_device || return $?
-	sns_repair
-
-	# Wait for repair to complete.
-	wait_for_sns_repair_or_rebalance "repair"
-	disk_state_set "repaired" $fail_device
-
-	disk_state_get $fail_device
-	echo "**** Spurious repair event test completed *****"
-
-	# Make sure rebalance is complete.
-	wait_for_sns_repair_or_rebalance "rebalance" || return $?
-
-	disk_state_set "rebalance" $fail_device
-	echo "Starting SNS Re-balance.."
-	sns_rebalance || return $?
-
-	echo "wait for sns rebalance"
-	wait_for_sns_repair_or_rebalance "rebalance" || return $?
-
-	disk_state_set "online" $fail_device || return $?
-
-	echo "query sns repair status"
-	sns_repair_or_rebalance_status "rebalance" || return $?
-
-	disk_state_get $fail_device
-
-	echo "SNS Re-balance done."
-
-	echo "Verifying object..."
-	motr_read_verify 0 || return $?
+#	echo "**** Test spurious rebalance request during repair, this should fail *****"
+#	disk_state_set "rebalance" $fail_device || return $?
+#	disk_state_get $fail_device || return $?
+#
+#	sns_rebalance
+#
+#	# Wait for rebalance request to complete.
+#	wait_for_sns_repair_or_rebalance "rebalance"
+#	disk_state_set "online" $fail_device
+#
+#	disk_state_get $fail_device
+#	echo "**** Spurious rebalance event test completed *****"
+#
+#	# Make sure that repair is complete.
+#	wait_for_sns_repair_or_rebalance "repair"
+#
+#	disk_state_set "failed" $fail_device
+#
+#	disk_state_get $fail_device
+#
+#	echo "Device $fail_device failed. Do dgmode read"
+#	motr_read_verify 0 || return $?
+#
+#	disk_state_set "repair" $fail_device || return $?
+#	sns_repair || return $?
+#
+#	echo "wait for sns repair"
+#	wait_for_sns_repair_or_rebalance "repair" || return $?
+#
+#	disk_state_set "repaired" $fail_device || return $?
+#
+#	echo "query sns repair status"
+#	sns_repair_or_rebalance_status "repair" || return $?
+#
+#	echo "SNS Repair done."
+#	motr_read_verify 0 || return $?
+#
+#	echo "Query device state"
+#	disk_state_get $fail_device || return $?
+#
+#	disk_state_set "rebalance" $fail_device || return $?
+#	echo "Starting SNS Re-balance.."
+#	sns_rebalance || return $?
+#
+#	echo "**** Test spurious repair event during rebalance, this should fail  *****"
+#	disk_state_set "failed" $fail_device || return $?
+#	disk_state_get $fail_device || return $?
+#
+#	disk_state_set "repair" $fail_device || return $?
+#	sns_repair
+#
+#	# Wait for repair to complete.
+#	wait_for_sns_repair_or_rebalance "repair"
+#	disk_state_set "repaired" $fail_device
+#
+#	disk_state_get $fail_device
+#	echo "**** Spurious repair event test completed *****"
+#
+#	# Make sure rebalance is complete.
+#	wait_for_sns_repair_or_rebalance "rebalance" || return $?
+#
+#	disk_state_set "rebalance" $fail_device
+#	echo "Starting SNS Re-balance.."
+#	sns_rebalance || return $?
+#
+#	echo "wait for sns rebalance"
+#	wait_for_sns_repair_or_rebalance "rebalance" || return $?
+#
+#	disk_state_set "online" $fail_device || return $?
+#
+#	echo "query sns repair status"
+#	sns_repair_or_rebalance_status "rebalance" || return $?
+#
+#	disk_state_get $fail_device
+#
+#	echo "SNS Re-balance done."
+#
+#	echo "Verifying object..."
+#	motr_read_verify 0 || return $?
 
 	return $?
 }
@@ -163,11 +165,11 @@ main()
 		rc=1
 	}
 
-	if [ $rc -eq 0 ]; then
-		sandbox_fini
-	else
+	# if [ $rc -eq 0 ]; then
+	# 	sandbox_fini
+	# else
 		echo "Test log available at $MOTR_TEST_LOGFILE."
-	fi
+	# fi
 	return $rc
 }
 

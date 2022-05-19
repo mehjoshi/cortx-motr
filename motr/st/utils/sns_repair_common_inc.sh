@@ -21,8 +21,8 @@ prepare_datafiles_and_objects()
 {
 	local rc=0
 
-	dd if=/dev/urandom bs=$src_bs count=$src_count \
-	   of="$MOTR_M0T1FS_TEST_DIR/srcfile" || return $?
+	# dd if=/dev/urandom bs=$src_bs count=$src_count \
+	#    of="$MOTR_M0T1FS_TEST_DIR/srcfile" || return $?
 
 	for ((i=0; i < ${#file[*]}; i++)) ; do
 		local lid=${unit2id_map[${unit_size[$i]}]}
@@ -35,7 +35,7 @@ prepare_datafiles_and_objects()
 		echo "creating object src${file[$i]} bs=${us} * count=${file_size[$i]}"
 		dd ibs=${us} count=${file_size[$i]}            \
                    obs=$((${us} * 100)) \
-		   if=/dev/urandom         \
+		   if=/root/largefile         \
 		   of="$MOTR_M0T1FS_TEST_DIR/src${file[$i]}"
 
 		$M0_SRC_DIR/motr/st/utils/m0cp ${MOTR_PARAM}     \

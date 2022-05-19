@@ -498,7 +498,9 @@ static int __group_next(struct m0_sns_cm_iter *it)
 	pm = fctx->sf_pm;
 	if (m0_sns_cm_pver_is_dirty(pm->pm_pver))
 		goto fid_next;
+        M0_LOG(M0_DEBUG, "mehul: sa_group = %lu last group = %lu", sa->sa_group, ifc->ifc_group_last);
 	for (group = sa->sa_group; group <= ifc->ifc_group_last; ++group) {
+		M0_LOG(M0_DEBUG, "mehul: group = %lu", group);
 		if (__group_skip(it, group))
 			continue;
 		has_incoming = __has_incoming(scm, ifc->ifc_fctx, group);
@@ -509,6 +511,7 @@ static int __group_next(struct m0_sns_cm_iter *it)
 			rc = __group_alloc(scm, gfid, group, pl, has_incoming,
 					   &it->si_ag);
 			if (rc == -ENOENT) {
+				M0_LOG(M0_DEBUG, "mehul: rc = %d", rc);
 				rc = 0;
 				continue;
 			}

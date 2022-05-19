@@ -554,6 +554,7 @@ static void _max_group_set(struct m0_sns_cm_file_ctx *fctx)
 	m0_fd_bwd_map(fctx->sf_pi, &ta, &sa);
 	if (fctx->sf_max_group < sa.sa_group)
 		fctx->sf_max_group = sa.sa_group;
+	M0_LOG(M0_ALWAYS, "mehul sf_fid = "FID_F" sf_max_group = %" PRIu64 ", sa_group = %" PRIu64 ", cob_size = %" PRIu64 ", ta_frame = %" PRIx64 "", FID_P(&fctx->sf_fid), fctx->sf_max_group, sa.sa_group, cob_size, ta.ta_frame);
 }
 
 static void _attr_ast_cb(struct m0_sm_group *grp, struct m0_sm_ast *ast)

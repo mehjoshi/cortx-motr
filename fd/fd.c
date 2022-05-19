@@ -835,6 +835,12 @@ pool_ver_get(const struct m0_pdclust_instance *pd_instance)
 	return pd_instance->pi_base.li_l->l_pver;
 }
 
+#define SADDR_F "<%" PRIx64 ":%" PRIx64 ">"
+#define SADDR_P(f)  (f)->sa_group,  (f)->sa_unit
+
+#define TADDR_F "<%" PRIx64 ":%" PRIx64 ">"
+#define TADDR_P(f)  (f)->ta_frame,  (f)->ta_obj
+
 M0_INTERNAL void m0_fd_fwd_map(struct m0_pdclust_instance *pi,
 			       const struct m0_pdclust_src_addr *src,
 			       struct m0_pdclust_tgt_addr *tgt)
@@ -871,6 +877,8 @@ M0_INTERNAL void m0_fd_fwd_map(struct m0_pdclust_instance *pi,
 	C = tile->ft_rows * tile->ft_cols / tile->ft_G;
 	m0_dec(C, src->sa_group, &omega, &src_base.sa_group);
 	permuted_tgt_get(pi, omega, rel_vidx, &tgt->ta_obj);
+
+	M0_LOG(M0_DEBUG, "mehul: src addr "SADDR_F " tgt addr " TADDR_F "", SADDR_P(src), TADDR_P(tgt));
 }
 
 static void permuted_tgt_get(struct m0_pdclust_instance *pi, uint64_t omega,
@@ -997,6 +1005,7 @@ M0_INTERNAL void m0_fd_bwd_map(struct m0_pdclust_instance *pi,
 		src->sa_group  = UINT64_MAX;
 		src->sa_unit   = UINT64_MAX;
 	}
+	M0_LOG(M0_DEBUG, "mehul: tgt addr "TADDR_F " src addr " SADDR_F "", TADDR_P(tgt), SADDR_P(src));
 }
 
 static void inverse_permuted_idx_get(struct m0_pdclust_instance *pi,
