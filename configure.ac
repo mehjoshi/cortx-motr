@@ -236,6 +236,7 @@ AC_ARG_ENABLE([dev-mode],
 AC_ARG_ENABLE([release],
         [AS_HELP_STRING([--enable-release],
                         [enable release mode (it has the same effect as --disable-dev-mode)])],
+        [], [enable_release=no]
         [AS_IF([test x$enable_release = xyes],
                [enable_dev_mode=no],[enable_dev_mode=yes])]
 )
